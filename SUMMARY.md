@@ -97,3 +97,7 @@
   * [☑ Alpine](cao-zuo-xi-tong-jing-xiang/alpine.md)
   * [Debian/Ubuntu](cao-zuo-xi-tong-jing-xiang/debian-ubuntu.md)
   * [CentOS/Fedora](cao-zuo-xi-tong-jing-xiang/centos-fedora.md)
+* [Tips](tips/README.md)
+  * [docker引擎开启远程访问](tips/docker-yin-qing-kai-qi-yuan-cheng-fang-wen.md)
+  * [dockerfile-maven-plugin](tips/dockerfile-maven-plugin.md)
+  * [IDEA连接远程docker](tips/idea-lian-jie-yuan-cheng-docker.md)
