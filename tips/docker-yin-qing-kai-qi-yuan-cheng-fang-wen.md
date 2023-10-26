@@ -9,7 +9,7 @@
     在**dockerd**命令后增加**-H tcp://0.0.0.0:2375**
 
     ```perl
-    ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H fd://
+    ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock
     ```
 2.  重启docker服务：
 

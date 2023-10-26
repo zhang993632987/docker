@@ -21,7 +21,7 @@
 {% hint style="info" %}
 根据上述内容可知，并不需要添加额外的配置将插件的goal与maven的执行阶段进行绑定，默认的绑定规则已能够满足使用需求。
 
-<mark style="color:blue;">**执行mvn package即可以完成项目打包，又能够完成镜像构建。**</mark>
+<mark style="color:blue;">**执行mvn package dockerfile:build**</mark> <mark style="color:blue;">**即可以完成项目打包，又能够完成镜像构建。**</mark>
 {% endhint %}
 
 ## 2. 开启docker远程访问
