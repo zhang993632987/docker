@@ -83,6 +83,7 @@
     * [8.4 最佳实践](ji-chu-zhi-shi/8.-dockerfile/8.4-zui-jia-shi-jian.md)
   * [9. Compose](ji-chu-zhi-shi/9.-compose/README.md)
     * [9.1 安装](ji-chu-zhi-shi/9.-compose/9.1-an-zhuang.md)
+    * [9.2](ji-chu-zhi-shi/9.-compose/9.2.md)
 * [中间件安装](zhong-jian-jian-an-zhuang/README.md)
   * [安装tomcat](zhong-jian-jian-an-zhuang/an-zhuang-tomcat.md)
   * [安装redis](zhong-jian-jian-an-zhuang/an-zhuang-redis.md)
