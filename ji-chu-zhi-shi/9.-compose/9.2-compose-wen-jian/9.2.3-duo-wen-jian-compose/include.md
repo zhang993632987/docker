@@ -1,6 +1,6 @@
-# 9.3.3 Include
+# Include
 
-使用顶层元素 "<mark style="color:blue;">**include**</mark>"，您可以直接在本地Compose文件中包含一个独立的Compose文件。这解决了[**Extend**](9.3.1-extend.md)和[**Merge**](9.3.2-merge.md)中存在的<mark style="color:orange;">**相对路径问题**</mark>。
+使用顶层元素 "<mark style="color:blue;">**include**</mark>"，您可以直接在本地Compose文件中包含一个独立的Compose文件。这解决了[**Extend**](extend.md)和[**Merge**](merge.md)中存在的<mark style="color:orange;">**相对路径问题**</mark>。
 
 "include"使得将复杂应用模块化为子Compose文件变得更加容易。这可以使应用程序配置更加简单和明确。这也有助于在配置文件组织中反映出负责代码的工程团队。
 
