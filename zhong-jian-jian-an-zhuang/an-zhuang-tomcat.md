@@ -1,6 +1,6 @@
 # 安装tomcat
 
-**进入**[**docker hub**](https://hub-stage.docker.com/)**网站，搜索tomcat的镜像**
+**进入docker hub(**[https://hub.docker.com/](https://hub.docker.com/)**)网站，搜索tomcat的镜像**
 
 选择官方认证的排在前面的镜像，点击进入详情页面，通过 tag 选择版本号
 
