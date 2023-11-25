@@ -54,6 +54,7 @@
     * [5.2 本地私有仓库](ji-chu-zhi-shi/5.-docker-cang-ku/5.2-ben-di-si-you-cang-ku/README.md)
       * [使用HTTPS协议](ji-chu-zhi-shi/5.-docker-cang-ku/5.2-ben-di-si-you-cang-ku/shi-yong-https-xie-yi.md)
       * [添加用户认证](ji-chu-zhi-shi/5.-docker-cang-ku/5.2-ben-di-si-you-cang-ku/tian-jia-yong-hu-ren-zheng.md)
+      * [使用push时遇到的一些坑](ji-chu-zhi-shi/5.-docker-cang-ku/5.2-ben-di-si-you-cang-ku/shi-yong-push-shi-yu-dao-de-yi-xie-keng.md)
   * [6. Docker数据管理](ji-chu-zhi-shi/6.-docker-shu-ju-guan-li/README.md)
     * [6.1 数据卷](ji-chu-zhi-shi/6.-docker-shu-ju-guan-li/6.1-shu-ju-juan.md)
     * [6.2 数据卷容器](ji-chu-zhi-shi/6.-docker-shu-ju-guan-li/6.2-shu-ju-juan-rong-qi.md)
