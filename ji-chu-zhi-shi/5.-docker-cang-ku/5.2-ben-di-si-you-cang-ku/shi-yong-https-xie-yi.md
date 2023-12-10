@@ -4,7 +4,7 @@
 
 获取证书有两种途径：
 
-* [**自签名证书**](http://127.0.0.1:5000/s/XswOsPx3RsMmwwn0j7vt/group-3/pei-zhi-ssl)，如果开发者只是想测试HTTPS，最快速的途径就是生成自签名证书，非常方便。
+* [**自签名证书**](https://app.gitbook.com/s/XswOsPx3RsMmwwn0j7vt/group-3/pei-zhi-ssl)，如果开发者只是想测试HTTPS，最快速的途径就是生成自签名证书，非常方便。
 * 使用**CA机构签发的证书**，如果对证书安全性、兼容性、功能有特殊需求，可以向CA机构申请证书。
 
 ## 启动registry

@@ -1,43 +1,6 @@
-# 安装redis
+# Cluster集群
 
-## 获取镜像
-
-```bash
-docker pull redis:7.0.12
-```
-
-## 创建目录
-
-```bash
-mkdir /media/redis
-```
-
-## 单机
-
-### **创建目录**
-
-```bash
-mkdir /media/redis/conf
-mkdir /media/redis/data
-
-vim /media/redis/conf/redis.conf
-```
-
-### **启动服务**
-
-```bash
-docker run -v /media/redis/conf:/etc/redis -v /media/redis/data:/data --name standalone -d redis:7.0.12 redis-server /etc/redis/redis.conf
-```
-
-### **访问redis服务**
-
-```bash
-docker exec -it standalone redis-cli
-```
-
-## 集群
-
-### **创建目录**
+## **创建目录**
 
 ```bash
 mkdir -p /media/redis/node1/conf
@@ -46,7 +9,7 @@ mkdir -p /media/redis/node1/data
 vim /media/redis/node1/conf/redis.conf
 ```
 
-\*\*注意：\*\*redis.conf中必须配置以下属性：
+注意：redis.conf中必须配置以下属性：
 
 * cluster-enabled yes
 * bind \* -::\*
@@ -60,10 +23,11 @@ cp -r /media/redis/node1 /media/redis/node5
 cp -r /media/redis/node1 /media/redis/node6
 ```
 
-### **启动集群服务**
+## **启动集群服务**
 
-#### **第一步：准备节点**
+### **第一步：准备节点**
 
+{% code overflow="wrap" %}
 ```bash
 docker run -v /media/redis/node1/conf:/etc/redis -v /media/redis/node1/data:/data --name redis-node1 --net redis-net -d redis:7.0.12 redis-server /etc/redis/redis.conf
 
@@ -77,10 +41,11 @@ docker run -v /media/redis/node5/conf:/etc/redis -v /media/redis/node5/data:/dat
 
 docker run -v /media/redis/node6/conf:/etc/redis -v /media/redis/node6/data:/data --name redis-node6 --net redis-net -d redis:7.0.12 redis-server /etc/redis/redis.conf
 ```
+{% endcode %}
 
 此时，各个redis服务均处于独立状态，彼此并无联系
 
-```bash
+```properties
 [root@docker-host redis]# docker exec -it redis-node1 redis-cli cluster nodes
 bd88e14a2634abc4ab38308e300a513b8ac253fc :6379@16379 myself,master - 0 0 0 connected
 [root@docker-host redis]# docker exec -it redis-node2 redis-cli cluster nodes
@@ -88,16 +53,23 @@ e5ceee80bb04c59c72e50f8b6a194c44dbeba1ac :6379@16379 myself,master - 0 0 0 conne
 ...
 ```
 
-#### **第二步：节点握手，并分配分区槽**
+### **第二步：节点握手，并分配分区槽**
 
+{% code overflow="wrap" %}
 ```bash
 docker exec -it redis-node1 \
 redis-cli --cluster create --cluster-replicas 1 redis-node1:6379 redis-node2:6379 redis-node3:6379 redis-node4:6379 redis-node5:6379 redis-node6:6379
 ```
+{% endcode %}
 
-#### **第三步：检查集群状态**
+### **第三步：检查集群状态**
 
-```bash
+<details>
+
+<summary>redis-cli cluster nodes</summary>
+
+{% code overflow="wrap" lineNumbers="true" %}
+```properties
 [root@docker-host redis]# docker exec -it redis-node1 redis-cli cluster nodes
 c26b99f08a621581431b98d43d29caaa506b141d 172.18.0.5:6379@16379 slave ede4128545e99cbd4c1275e3f2f9c9f97e91ad54 0 1689671423000 3 connected
 ede4128545e99cbd4c1275e3f2f9c9f97e91ad54 172.18.0.4:6379@16379 master - 0 1689671423558 3 connected 10923-16383
@@ -105,9 +77,17 @@ ede4128545e99cbd4c1275e3f2f9c9f97e91ad54 172.18.0.4:6379@16379 master - 0 168967
 bd88e14a2634abc4ab38308e300a513b8ac253fc 172.18.0.2:6379@16379 myself,master - 0 1689671423000 1 connected 0-5460
 e5ceee80bb04c59c72e50f8b6a194c44dbeba1ac 172.18.0.3:6379@16379 master - 0 1689671424566 2 connected 5461-10922
 2246d056901e369cf170c514550f260a687182bf 172.18.0.6:6379@16379 slave bd88e14a2634abc4ab38308e300a513b8ac253fc 0 1689671423000 1 connected
+```
+{% endcode %}
 
-[root@docker-host redis]# docker exec -it redis-node1 redis-cli cluster info
-cluster_state:ok
+</details>
+
+<details>
+
+<summary>redis-cli cluster info</summary>
+
+<pre class="language-properties"><code class="lang-properties"><strong>[root@docker-host redis]# docker exec -it redis-node1 redis-cli cluster info
+</strong>cluster_state:ok
 cluster_slots_assigned:16384
 cluster_slots_ok:16384
 cluster_slots_pfail:0
@@ -124,7 +104,16 @@ cluster_stats_messages_pong_received:103
 cluster_stats_messages_meet_received:5
 cluster_stats_messages_received:214
 total_cluster_links_buffer_limit_exceeded:0
+</code></pre>
 
+</details>
+
+<details>
+
+<summary>redis-cli --cluster check redis-node1:6379</summary>
+
+{% code overflow="wrap" lineNumbers="true" %}
+```properties
 [root@docker-host redis]# docker exec -it redis-node1 redis-cli --cluster check redis-node1:6379
 redis-node1:6379 (bd88e14a...) -> 0 keys | 5461 slots | 1 slaves.
 172.18.0.4:6379 (ede41285...) -> 0 keys | 5461 slots | 1 slaves.
@@ -154,10 +143,12 @@ S: 2246d056901e369cf170c514550f260a687182bf 172.18.0.6:6379
 >>> Check for open slots...
 >>> Check slots coverage...
 [OK] All 16384 slots covered.
-
 ```
+{% endcode %}
 
-#### **访问redis集群**
+</details>
+
+### **访问redis集群**
 
 ```bash
 [root@docker-host redis]# docker exec -it redis-node1 redis-cli -c
@@ -171,11 +162,11 @@ OK
 
 ```
 
-redis-cli命令中的 **-c** 的作用时，当收到重定向信息时，进行自动重定向
+<mark style="color:orange;">**redis-cli命令中的 -c 的作用时，当收到重定向信息时，进行自动重定向**</mark>
 
-### **集群扩容**
+## **集群扩容**
 
-#### **第一步：准备节点**
+### **第一步：准备节点**
 
 ```bash
 cp -r /media/redis/node1 /media/redis/node7 
@@ -185,20 +176,22 @@ cp -r /media/redis/node1 /media/redis/node8
 rm -rf /media/redis/node8/data/*
 ```
 
+{% code overflow="wrap" %}
 ```bash
 docker run -v /media/redis/node7/conf:/etc/redis -v /media/redis/node7/data:/data --name redis-node7 --net redis-net -d redis:7.0.12 redis-server /etc/redis/redis.conf
 
 docker run -v /media/redis/node8/conf:/etc/redis -v /media/redis/node8/data:/data --name redis-node8 --net redis-net -d redis:7.0.12 redis-server /etc/redis/redis.conf
 ```
+{% endcode %}
 
-#### **第二步：新节点加入集群**
+### **第二步：新节点加入集群**
 
 ```bash
 docker exec -it redis-node1 \
 redis-cli --cluster add-node redis-node7:6379 redis-node1:6379
 ```
 
-#### **第三步：槽迁移**
+### **第三步：槽迁移**
 
 ```bash
 docker exec -it redis-node1 \
@@ -208,9 +201,14 @@ redis-cli --cluster reshard redis-node1:6379 \
 --cluster-slots 4096 --cluster-yes --cluster-timeout 100 --cluster-pipeline 1000
 ```
 
-#### **第四步：检查集群状态**
+### **第四步：检查集群状态**
 
-```bash
+<details>
+
+<summary>redis-cli --cluster check redis-node1:6379</summary>
+
+{% code overflow="wrap" lineNumbers="true" %}
+```properties
 [root@docker-host redis]# docker exec -it redis-node1 redis-cli --cluster check redis-node1:6379
 172.18.0.6:6379 (2246d056...) -> 0 keys | 4096 slots | 1 slaves.
 172.18.0.8:6379 (bca02a4b...) -> 1 keys | 4096 slots | 0 slaves.
@@ -244,28 +242,34 @@ M: ede4128545e99cbd4c1275e3f2f9c9f97e91ad54 172.18.0.4:6379
 >>> Check slots coverage...
 [OK] All 16384 slots covered.
 ```
+{% endcode %}
 
-#### **第五步：增加slave节点**
+</details>
 
+### **第五步：增加slave节点**
+
+{% code overflow="wrap" %}
 ```bash
 # bca02a4b4d88a03bb3bd6bcd338196b2ca6d31fe为新增从节点的跟踪主节点的node id
 docker exec -it redis-node1 \
 redis-cli --cluster add-node redis-node8 redis-node1 --cluster-slave --cluster-master-id bca02a4b4d88a03bb3bd6bcd338196b2ca6d31fe
 ```
+{% endcode %}
 
-### **集群缩容**
+## **集群缩容**
 
-#### **第一步：移除slave节点**
+### **第一步：移除slave节点**
 
 ```bash
 # d143b322b356edce52909b6686384555968ceb34是待移除节点的node id
 docker exec -it redis-node1 \
-redis-cli --cluster del-node redis-node1:6379 d143b322b356edce52909b6686384555968ceb34
+redis-cli --cluster del-node redis-node1:6379 \
+d143b322b356edce52909b6686384555968ceb34
 ```
 
-#### **第二步：槽迁移**
+### **第二步：槽迁移**
 
-为了满足负载均衡条件，在归还节点的slot时，应该将这些slot均匀地分配给各个主节点。
+**为了满足负载均衡条件，在归还节点的slot时，应该将这些slot**<mark style="color:orange;">**均匀**</mark>**地分配给各个主节点。**
 
 而因为reshard命令只能向一个目标节点迁移slot，因此需要多次执行reshard命令以完成slot的迁移。
 
@@ -291,7 +295,12 @@ redis-cli --cluster reshard redis-node1:6379 \
 --cluster-slots 1366 --cluster-yes --cluster-timeout 100 --cluster-pipeline 1000
 ```
 
-```bash
+<details>
+
+<summary>redis-cli --cluster check redis-node1:6379</summary>
+
+{% code overflow="wrap" lineNumbers="true" %}
+```properties
 [root@docker-host redis]# docker exec -it redis-node1 redis-cli --cluster check redis-node1:6379
 
 172.18.0.6:6379 (2246d056...) -> 0 keys | 5461 slots | 1 slaves.
@@ -325,17 +334,25 @@ M: ede4128545e99cbd4c1275e3f2f9c9f97e91ad54 172.18.0.4:6379
 >>> Check for open slots...
 >>> Check slots coverage...
 [OK] All 16384 slots covered.
-
 ```
+{% endcode %}
 
-#### **第三步：移除master节点**
+</details>
+
+### **第三步：移除master节点**
 
 ```bash
 docker exec -it redis-node1 \
-redis-cli --cluster del-node redis-node1:6379 bca02a4b4d88a03bb3bd6bcd338196b2ca6d31fe
+redis-cli --cluster del-node redis-node1:6379 \
+bca02a4b4d88a03bb3bd6bcd338196b2ca6d31fe
 ```
 
-```bash
+<details>
+
+<summary>redis-cli cluster nodes</summary>
+
+{% code overflow="wrap" lineNumbers="true" %}
+```properties
 # 3主3从
 [root@docker-host redis]# docker exec -it redis-node1 redis-cli cluster nodes
 2246d056901e369cf170c514550f260a687182bf 172.18.0.6:6379@16379 master - 0 1689679937000 12 connected 1366-5460 6826 10923-12287
@@ -346,6 +363,9 @@ e5ceee80bb04c59c72e50f8b6a194c44dbeba1ac 172.18.0.3:6379@16379 master - 0 168967
 ede4128545e99cbd4c1275e3f2f9c9f97e91ad54 172.18.0.4:6379@16379 master - 0 1689679934000 13 connected 0-1365 12288-16383
 
 ```
+{% endcode %}
+
+</details>
 
 ## **redis-cli --cluster的子命令**
 
